@@ -1,0 +1,12 @@
+{
+  "name": "java-script-sample",
+  "version": "0.0.0",
+  "description": "JavaScriptSample",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
