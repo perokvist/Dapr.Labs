@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DaprSamples", "CSharpSample\CSharpSample.csproj", "{309B226D-571D-4D12-98DA-207FE91DC09B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpSample", "CSharpSample\CSharpSample.csproj", "{309B226D-571D-4D12-98DA-207FE91DC09B}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FSharpSample", "FSharpSample\FSharpSample.fsproj", "{69EFF1A5-BD8F-460E-9FA1-37DFF40D8304}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "FSharpSample", "FSharpSample\FSharpSample.fsproj", "{69EFF1A5-BD8F-460E-9FA1-37DFF40D8304}"
+EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "JavaScriptSample", "JavaScriptSample\JavaScriptSample.njsproj", "{4CDDBF13-330D-4565-B9FB-EE43364860BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{69EFF1A5-BD8F-460E-9FA1-37DFF40D8304}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69EFF1A5-BD8F-460E-9FA1-37DFF40D8304}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69EFF1A5-BD8F-460E-9FA1-37DFF40D8304}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CDDBF13-330D-4565-B9FB-EE43364860BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CDDBF13-330D-4565-B9FB-EE43364860BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CDDBF13-330D-4565-B9FB-EE43364860BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CDDBF13-330D-4565-B9FB-EE43364860BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
