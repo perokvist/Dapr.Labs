@@ -9,17 +9,22 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore
 open Microsoft.Extensions.Logging
 open System.Text.Json
-   
-let configureServices (services : IServiceCollection) =
-    services.AddDaprClient() |> ignore
-    services.AddLogging() |> ignore
-    services.AddSingleton(JsonSerializerOptions()) |> ignore
-                 //{
-                     //PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                     //PropertyNameCaseInsensitive = true,
-                 //}) |> ignore
+open System.Threading.Tasks
+open System.Text.Json.Serialization
+open System.IO
 
-            
+
+type TestEvent =
+    {
+        Message : string
+    }
+   
+let jsonOptions = JsonSerializerOptions() |> fun(x) -> 
+    x.Converters.Add(JsonFSharpConverter()) |> ignore
+    x 
+
+let deserialize<'T> (json:Stream) = JsonSerializer.DeserializeAsync<'T>(json, jsonOptions).AsTask() |> Async.AwaitTask
+
 let createLogger (ctx:HttpContext) (name:string) = ctx.RequestServices.GetService<ILoggerFactory>() |> fun(x) -> x.CreateLogger(name)
 let log (message:string) (logger:ILogger) = LoggerExtensions.LogInformation(logger, message)
 
@@ -28,8 +33,23 @@ let helloRoute = fun(ctx:HttpContext) ->
     ctx.Response.WriteAsync "Hello World!"
 
 let sampleRoute = fun(ctx:HttpContext) ->
-    createLogger ctx "subscriber" |> log "F# got event" |> ignore
+    createLogger ctx "subscriber" |> log "F# got event (pub/sub)" |> ignore
     ctx.Response.WriteAsync "Hello sample"
+
+let sampleBindingRoute = fun(ctx:HttpContext) ->
+    let logger = createLogger ctx "binding"
+    do logger |> log "F# got event (binding)"
+    async {
+        let! payload = deserialize<TestEvent> ctx.Request.Body 
+        do logger |> log payload.Message
+        ctx.Response.WriteAsync("Hello sample") |> Async.AwaitTask |> ignore
+    } |> Async.StartAsTask :> Task
+
+    
+let configureServices (services : IServiceCollection) =
+    services.AddDaprClient() |> ignore
+    services.AddLogging() |> ignore
+    services.AddSingleton(jsonOptions) |> ignore
 
 let configureApp (app : IApplicationBuilder) =
     app.UseRouting() |> ignore
@@ -39,6 +59,7 @@ let configureApp (app : IApplicationBuilder) =
             endpoints.MapSubscribeHandler() |> ignore
             endpoints.MapGet("/", fun ctx -> helloRoute ctx) |> ignore
             endpoints.MapPost("/sample", fun ctx -> sampleRoute ctx).WithTopic("sample") |> ignore
+            endpoints.MapPost("/hub", fun ctx -> sampleBindingRoute ctx) |> ignore
             ) |> ignore
 
 let configureLogging (loggerBuilder : ILoggingBuilder) =
