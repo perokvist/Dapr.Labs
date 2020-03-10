@@ -26,22 +26,22 @@ let jsonOptions = JsonSerializerOptions() |> fun(x) ->
 let deserialize<'T> (json:Stream) = JsonSerializer.DeserializeAsync<'T>(json, jsonOptions).AsTask() |> Async.AwaitTask
 
 let createLogger (ctx:HttpContext) (name:string) = ctx.RequestServices.GetService<ILoggerFactory>() |> fun(x) -> x.CreateLogger(name)
-let log (message:string) (logger:ILogger) = LoggerExtensions.LogInformation(logger, message)
+let log (logger:ILogger) (message:string) = LoggerExtensions.LogInformation(logger, message)
 
 let helloRoute = fun(ctx:HttpContext) -> 
-    createLogger ctx "sample" |> log "hello world" |> ignore
+    createLogger ctx "sample" |> log <| "hello world" |> ignore
     ctx.Response.WriteAsync "Hello World!"
 
 let sampleRoute = fun(ctx:HttpContext) ->
-    createLogger ctx "subscriber" |> log "F# got event (pub/sub)" |> ignore
+    createLogger ctx "subscriber" |> log <| "F# got event (pub/sub)" |> ignore
     ctx.Response.WriteAsync "Hello sample"
 
 let sampleBindingRoute = fun(ctx:HttpContext) ->
-    let logger = createLogger ctx "binding"
-    do logger |> log "F# got event (binding)"
+    let logger = createLogger ctx "binding" |> log 
+    do logger "F# got event (binding)"
     async {
         let! payload = deserialize<TestEvent> ctx.Request.Body 
-        do logger |> log payload.Message
+        do logger payload.Message
         ctx.Response.WriteAsync("Hello sample") |> Async.AwaitTask |> ignore
     } |> Async.StartAsTask :> Task
 
