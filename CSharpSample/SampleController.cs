@@ -1,4 +1,5 @@
 ﻿using Dapr;
+using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.IO;
@@ -17,18 +18,18 @@ namespace DaprSamples
         }
 
         [HttpGet("test")]
-        public async System.Threading.Tasks.Task<ActionResult> GetAsync([FromServices] StateClient stateClient)
+        public async Task<ActionResult> GetAsync([FromServices] DaprClient daprClient)
         {
-            var r = await stateClient.GetStateEntryAsync<int>("sample", "key");
+            var r = await daprClient.GetStateEntryAsync<int>("sample", "key");
             this.logger.LogInformation($"GET!! ({r})");
             return Ok();
         }
 
         [HttpPost("test")]
-        public async System.Threading.Tasks.Task<ActionResult> TestPostAsync([FromServices] StateClient stateClient)
+        public async Task<ActionResult> TestPostAsync([FromServices] DaprClient daprClient)
         {
             this.logger.LogInformation("POST!!");
-            var r = await stateClient.GetStateEntryAsync<int>("sample", "key");
+            var r = await daprClient.GetStateEntryAsync<int>("sample", "key");
             r.Value++;
             await r.SaveAsync();
             return Ok();
