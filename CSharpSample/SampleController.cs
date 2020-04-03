@@ -20,7 +20,7 @@ namespace DaprSamples
         [HttpGet("test")]
         public async Task<ActionResult> GetAsync([FromServices] DaprClient daprClient)
         {
-            var r = await daprClient.GetStateEntryAsync<int>("sample", "key");
+            var r = await daprClient.GetStateAsync<int>(StoreName, "key");
             this.logger.LogInformation($"GET!! ({r})");
             return Ok();
         }
@@ -29,7 +29,7 @@ namespace DaprSamples
         public async Task<ActionResult> TestPostAsync([FromServices] DaprClient daprClient)
         {
             this.logger.LogInformation("POST!!");
-            var r = await daprClient.GetStateEntryAsync<int>("sample", "key");
+            var r = await daprClient.GetStateEntryAsync<int>(StoreName, "key");
             r.Value++;
             await r.SaveAsync();
             return Ok();
