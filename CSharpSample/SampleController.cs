@@ -56,7 +56,8 @@ namespace DaprSamples
 
             foreach (var e in Enumerable.Range(0, 20))
             {
-                await daprClient.InvokeBindingAsync("hub", e);
+                await daprClient.InvokeBindingAsync("hub", $"Hello {e}");
+                this.logger.LogInformation("C# Published {e}", e);
             }
             this.logger.LogInformation("BIND End");
             return Ok();
@@ -81,15 +82,17 @@ namespace DaprSamples
         [HttpPost("hub")]
         public async Task<ActionResult> PostHubAsync()
         {
-            this.logger.LogInformation("C# got event (binding)");
-            using (var reader = new StreamReader(Request.Body))
+            using (this.logger.BeginScope(Request.Headers["traceparent"]))
             {
-                var body = await reader.ReadToEndAsync();
-                this.logger.LogInformation(body);
+                this.logger.LogInformation("C# got event (binding)");
+                using (var reader = new StreamReader(Request.Body))
+                {
+                    var body = await reader.ReadToEndAsync();
+                    this.logger.LogInformation(body);
+                }
+                this.logger.LogInformation("C# done event (binding)");
+                return base.Json(new { Message = "hello" });
             }
-            this.logger.LogInformation("C# done event (binding)");
-            return base.Json(new { Message = "hello" });
         }
-
     }
 }

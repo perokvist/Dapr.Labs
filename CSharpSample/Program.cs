@@ -13,7 +13,7 @@ namespace DaprSamples
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureLogging(b => b.AddConsole())
+                .ConfigureLogging(b => b.AddConsole(x => x.IncludeScopes = true))
                 .ConfigureWebHostDefaults(webBuilder =>
                     webBuilder.ConfigureServices(services =>
                         services
